@@ -1,0 +1,481 @@
+diff --git a/changes.txt b/changes.txt
+new file mode 100644
+index 0000000..09a973e
+--- /dev/null
++++ b/changes.txt
+@@ -0,0 +1,138 @@
++diff --git a/res/layout/main.xml b/res/layout/main.xml
++index c2eec36..f4524aa 100644
++--- a/res/layout/main.xml
+++++ b/res/layout/main.xml
++@@ -41,6 +41,7 @@
++         android:id="@+id/save"
++         android:layout_width="fill_parent"
++         android:layout_height="wrap_content"
++-        android:text="@string/save" />
+++        android:text="@string/save"
+++        android:onClick="OnClick" />
++ 
++ </LinearLayout>
++\ No newline at end of file
++diff --git a/src/ca/ualberta/cs/lonelytwitter/LonelyTweetModel.java b/src/ca/ualberta/cs/lonelytwitter/LonelyTweetModel.java
++new file mode 100644
++index 0000000..fdf0368
++--- /dev/null
+++++ b/src/ca/ualberta/cs/lonelytwitter/LonelyTweetModel.java
++@@ -0,0 +1,33 @@
+++package ca.ualberta.cs.lonelytwitter;
+++
+++import java.util.Date;
+++
+++public abstract class LonelyTweetModel {
+++	private String text;
+++	private Date timestamp;
+++	public String getText() {
+++		return text;
+++	}
+++	
+++	public LonelyTweetModel(String text) {
+++		super();
+++		this.text = text;
+++		timestamp = new Date();
+++	}
+++	
+++	public LonelyTweetModel(String text, Date timestamp) {
+++		super();
+++		this.text = text;
+++		this.timestamp = timestamp;
+++	}
+++	
+++	public void setText(String text) {
+++		this.text = text;
+++	}
+++	
+++	public abstract Date getTimestamp();
+++	
+++	public void setTimestamp(Date timestamp) {
+++		this.timestamp = timestamp;
+++	}
+++}
++diff --git a/src/ca/ualberta/cs/lonelytwitter/LonelyTwitterActivity.java b/src/ca/ualberta/cs/lonelytwitter/LonelyTwitterActivity.java
++index cd5feb6..b8dcdeb 100644
++--- a/src/ca/ualberta/cs/lonelytwitter/LonelyTwitterActivity.java
+++++ b/src/ca/ualberta/cs/lonelytwitter/LonelyTwitterActivity.java
++@@ -8,6 +8,7 @@ import java.io.IOException;
++ import java.io.InputStreamReader;
++ import java.util.ArrayList;
++ import java.util.Date;
+++import java.util.HashSet;
++ 
++ import android.app.Activity;
++ import android.content.Context;
++@@ -23,6 +24,7 @@ public class LonelyTwitterActivity extends Activity {
++ 	private static final String FILENAME = "file.sav";
++ 	private EditText bodyText;
++ 	private ListView oldTweetsList;
+++	HashSet<String> h;
++ 	
++ 	/** Called when the activity is first created. */
++ 	@Override
++@@ -33,24 +35,29 @@ public class LonelyTwitterActivity extends Activity {
++ 		bodyText = (EditText) findViewById(R.id.body);
++ 		Button saveButton = (Button) findViewById(R.id.save);
++ 		oldTweetsList = (ListView) findViewById(R.id.oldTweetsList);
+++		
+++		
+++		//saveButton.setOnClickListener(new View.OnClickListener());
+++	}
+++	
+++	public void onClick(View v) {
+++		setResult(RESULT_OK);
+++		String text = bodyText.getText().toString();
+++		saveInFile(text, new Date(System.currentTimeMillis()));
+++		finish();
+++	}
+++
++ 
++-		saveButton.setOnClickListener(new View.OnClickListener() {
++ 
++-			public void onClick(View v) {
++-				setResult(RESULT_OK);
++-				String text = bodyText.getText().toString();
++-				saveInFile(text, new Date(System.currentTimeMillis()));
++-				finish();
++ 
++-			}
++-		});
++-	}
++ 
++ 	@Override
++ 	protected void onStart() {
++ 		// TODO Auto-generated method stub
++ 		super.onStart();
+++		// This can store normal and important tweets because they extend lonely
++ 		String[] tweets = loadFromFile();
+++		//String[] tweets = loadFromFile();
++ 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
++ 				R.layout.list_item, tweets);
++ 		oldTweetsList.setAdapter(adapter);
++@@ -66,6 +73,16 @@ public class LonelyTwitterActivity extends Activity {
++ 				tweets.add(line);
++ 				line = in.readLine();
++ 			}
+++			//Test t = new Test("hi");
+++			//t.text = "abc";
+++			//t.setText("Morgan Rules");
+++			//tweets.add(t.getText());
+++			
+++			//Test t2 = new Test2("meow");
+++			//tweets.add(t2.getText());
+++		
+++			InterfaceImp1 ii = new InterfaceImp1();
+++			tweets.add(ii.getText());
++ 
++ 		} catch (FileNotFoundException e) {
++ 			// TODO Auto-generated catch block
++@@ -81,7 +98,7 @@ public class LonelyTwitterActivity extends Activity {
++ 		try {
++ 			FileOutputStream fos = openFileOutput(FILENAME,
++ 					Context.MODE_APPEND);
++-			fos.write(new String(date.toString() + " | " + text)
+++			fos.write(new String(date.toString() + " | " + text + "\n")
++ 					.getBytes());
++ 			fos.close();
++ 		} catch (FileNotFoundException e) {
+diff --git a/res/layout/main.xml b/res/layout/main.xml
+index c2eec36..f4524aa 100644
+--- a/res/layout/main.xml
++++ b/res/layout/main.xml
+@@ -41,6 +41,7 @@
+         android:id="@+id/save"
+         android:layout_width="fill_parent"
+         android:layout_height="wrap_content"
+-        android:text="@string/save" />
++        android:text="@string/save"
++        android:onClick="OnClick" />
+ 
+ </LinearLayout>
+\ No newline at end of file
+diff --git a/src/ca/ualberta/cs/lonelytwitter/Interface1.java b/src/ca/ualberta/cs/lonelytwitter/Interface1.java
+new file mode 100644
+index 0000000..c25289a
+--- /dev/null
++++ b/src/ca/ualberta/cs/lonelytwitter/Interface1.java
+@@ -0,0 +1,9 @@
++package ca.ualberta.cs.lonelytwitter;
++
++public interface Interface1 {
++
++	String s = "This is an interface";
++	
++	// in this interface we will have this method but it depends
++	String  getText();
++}
+diff --git a/src/ca/ualberta/cs/lonelytwitter/InterfaceImp1.java b/src/ca/ualberta/cs/lonelytwitter/InterfaceImp1.java
+new file mode 100644
+index 0000000..03da828
+--- /dev/null
++++ b/src/ca/ualberta/cs/lonelytwitter/InterfaceImp1.java
+@@ -0,0 +1,9 @@
++package ca.ualberta.cs.lonelytwitter;
++
++public class InterfaceImp1 implements Interface1 {
++	
++	public String getText() {
++		return s + "implementation";
++	}
++
++}
+diff --git a/src/ca/ualberta/cs/lonelytwitter/LonelyTweetModel.java b/src/ca/ualberta/cs/lonelytwitter/LonelyTweetModel.java
+new file mode 100644
+index 0000000..fdf0368
+--- /dev/null
++++ b/src/ca/ualberta/cs/lonelytwitter/LonelyTweetModel.java
+@@ -0,0 +1,33 @@
++package ca.ualberta.cs.lonelytwitter;
++
++import java.util.Date;
++
++public abstract class LonelyTweetModel {
++	private String text;
++	private Date timestamp;
++	public String getText() {
++		return text;
++	}
++	
++	public LonelyTweetModel(String text) {
++		super();
++		this.text = text;
++		timestamp = new Date();
++	}
++	
++	public LonelyTweetModel(String text, Date timestamp) {
++		super();
++		this.text = text;
++		this.timestamp = timestamp;
++	}
++	
++	public void setText(String text) {
++		this.text = text;
++	}
++	
++	public abstract Date getTimestamp();
++	
++	public void setTimestamp(Date timestamp) {
++		this.timestamp = timestamp;
++	}
++}
+diff --git a/src/ca/ualberta/cs/lonelytwitter/LonelyTwitterActivity.java b/src/ca/ualberta/cs/lonelytwitter/LonelyTwitterActivity.java
+index cd5feb6..b8dcdeb 100644
+--- a/src/ca/ualberta/cs/lonelytwitter/LonelyTwitterActivity.java
++++ b/src/ca/ualberta/cs/lonelytwitter/LonelyTwitterActivity.java
+@@ -8,6 +8,7 @@ import java.io.IOException;
+ import java.io.InputStreamReader;
+ import java.util.ArrayList;
+ import java.util.Date;
++import java.util.HashSet;
+ 
+ import android.app.Activity;
+ import android.content.Context;
+@@ -23,6 +24,7 @@ public class LonelyTwitterActivity extends Activity {
+ 	private static final String FILENAME = "file.sav";
+ 	private EditText bodyText;
+ 	private ListView oldTweetsList;
++	HashSet<String> h;
+ 	
+ 	/** Called when the activity is first created. */
+ 	@Override
+@@ -33,24 +35,29 @@ public class LonelyTwitterActivity extends Activity {
+ 		bodyText = (EditText) findViewById(R.id.body);
+ 		Button saveButton = (Button) findViewById(R.id.save);
+ 		oldTweetsList = (ListView) findViewById(R.id.oldTweetsList);
++		
++		
++		//saveButton.setOnClickListener(new View.OnClickListener());
++	}
++	
++	public void onClick(View v) {
++		setResult(RESULT_OK);
++		String text = bodyText.getText().toString();
++		saveInFile(text, new Date(System.currentTimeMillis()));
++		finish();
++	}
++
+ 
+-		saveButton.setOnClickListener(new View.OnClickListener() {
+ 
+-			public void onClick(View v) {
+-				setResult(RESULT_OK);
+-				String text = bodyText.getText().toString();
+-				saveInFile(text, new Date(System.currentTimeMillis()));
+-				finish();
+ 
+-			}
+-		});
+-	}
+ 
+ 	@Override
+ 	protected void onStart() {
+ 		// TODO Auto-generated method stub
+ 		super.onStart();
++		// This can store normal and important tweets because they extend lonely
+ 		String[] tweets = loadFromFile();
++		//String[] tweets = loadFromFile();
+ 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+ 				R.layout.list_item, tweets);
+ 		oldTweetsList.setAdapter(adapter);
+@@ -66,6 +73,16 @@ public class LonelyTwitterActivity extends Activity {
+ 				tweets.add(line);
+ 				line = in.readLine();
+ 			}
++			//Test t = new Test("hi");
++			//t.text = "abc";
++			//t.setText("Morgan Rules");
++			//tweets.add(t.getText());
++			
++			//Test t2 = new Test2("meow");
++			//tweets.add(t2.getText());
++		
++			InterfaceImp1 ii = new InterfaceImp1();
++			tweets.add(ii.getText());
+ 
+ 		} catch (FileNotFoundException e) {
+ 			// TODO Auto-generated catch block
+@@ -81,7 +98,7 @@ public class LonelyTwitterActivity extends Activity {
+ 		try {
+ 			FileOutputStream fos = openFileOutput(FILENAME,
+ 					Context.MODE_APPEND);
+-			fos.write(new String(date.toString() + " | " + text)
++			fos.write(new String(date.toString() + " | " + text + "\n")
+ 					.getBytes());
+ 			fos.close();
+ 		} catch (FileNotFoundException e) {
+diff --git a/src/ca/ualberta/cs/lonelytwitter/MyAbstract.java b/src/ca/ualberta/cs/lonelytwitter/MyAbstract.java
+new file mode 100644
+index 0000000..09881be
+--- /dev/null
++++ b/src/ca/ualberta/cs/lonelytwitter/MyAbstract.java
+@@ -0,0 +1,35 @@
++package ca.ualberta.cs.lonelytwitter;
++
++import java.util.Date;
++
++public abstract class MyAbstract implements MyInterface{
++	
++	private Date timestamp;
++	private String text;
++	
++
++	public MyAbstract(String text, Date timestamp) {
++		// TODO Auto-generated constructor stub
++		super();
++		this.text = text;
++		this.timestamp = timestamp;
++		
++	}
++
++	public MyAbstract(String text) {
++		// TODO Auto-generated constructor stub
++		super();
++		this.text = text;
++		timestamp = new Date();
++	}
++
++	public abstract String getText();
++	
++	public abstract Date getTimestamp();
++
++	public void setTimestamp() {
++		// TODO Auto-generated method stub
++		this.timestamp = timestamp;
++	}
++	
++}
+diff --git a/src/ca/ualberta/cs/lonelytwitter/MyFirstSubclass.java b/src/ca/ualberta/cs/lonelytwitter/MyFirstSubclass.java
+new file mode 100644
+index 0000000..fe4074a
+--- /dev/null
++++ b/src/ca/ualberta/cs/lonelytwitter/MyFirstSubclass.java
+@@ -0,0 +1,27 @@
++package ca.ualberta.cs.lonelytwitter;
++
++import java.util.Date;
++
++public class MyFirstSubclass extends MyAbstract {
++
++	public MyFirstSubclass(String text) {
++		super(text);
++		// TODO Auto-generated constructor stub
++	}
++	
++	public MyFirstSubclass(String text, Date timestamp) {
++		super(text, timestamp);
++	}
++	
++	public String getText() {
++		return "Tweet!";
++	}
++
++	@Override
++	public Date getTimestamp() {
++		// TODO Auto-generated method stub
++		Date timestamp = new Date();
++		return timestamp;
++	}
++
++}
+diff --git a/src/ca/ualberta/cs/lonelytwitter/MyInterface.java b/src/ca/ualberta/cs/lonelytwitter/MyInterface.java
+new file mode 100644
+index 0000000..bfb352a
+--- /dev/null
++++ b/src/ca/ualberta/cs/lonelytwitter/MyInterface.java
+@@ -0,0 +1,10 @@
++package ca.ualberta.cs.lonelytwitter;
++
++import java.util.Date;
++
++public interface MyInterface {
++	
++	String getText();
++	Date getTimestamp();
++
++}
+diff --git a/src/ca/ualberta/cs/lonelytwitter/MySecondSubclass.java b/src/ca/ualberta/cs/lonelytwitter/MySecondSubclass.java
+new file mode 100644
+index 0000000..d4421fd
+--- /dev/null
++++ b/src/ca/ualberta/cs/lonelytwitter/MySecondSubclass.java
+@@ -0,0 +1,28 @@
++package ca.ualberta.cs.lonelytwitter;
++
++import java.util.Date;
++
++public class MySecondSubclass extends MyAbstract {
++
++	public MySecondSubclass(String text) {
++		super(text);
++	}
++	
++	public MySecondSubclass(String text, Date timestamp) {
++		super(text, timestamp);
++	}
++
++	
++	public String getText() {
++		return "Important!";
++	}
++
++	@Override
++	public Date getTimestamp() {
++		// TODO Auto-generated method stub
++		Date timestamp = new Date();
++		return timestamp;
++	}
++
++	
++}
+diff --git a/src/ca/ualberta/cs/lonelytwitter/Test.java b/src/ca/ualberta/cs/lonelytwitter/Test.java
+new file mode 100644
+index 0000000..3540ce0
+--- /dev/null
++++ b/src/ca/ualberta/cs/lonelytwitter/Test.java
+@@ -0,0 +1,20 @@
++package ca.ualberta.cs.lonelytwitter;
++
++public class Test {
++
++	private String text;
++	
++	// constructor
++	public Test (String t) {
++		text = t;
++	}
++	
++	public String getText() {
++		 return text;
++	}
++	
++	public void setText(String t) {
++		this.text = t;
++	}
++	
++}
+diff --git a/src/ca/ualberta/cs/lonelytwitter/Test2.java b/src/ca/ualberta/cs/lonelytwitter/Test2.java
+new file mode 100644
+index 0000000..eba4a62
+--- /dev/null
++++ b/src/ca/ualberta/cs/lonelytwitter/Test2.java
+@@ -0,0 +1,13 @@
++package ca.ualberta.cs.lonelytwitter;
++
++public class Test2 extends Test {
++
++	public Test2 (String t) {
++		// if you define a constructor in a parent class, 
++		// you have to define super() in the child constructor
++		super(t);
++		
++		setText("ello " + t);
++		
++	}
++}

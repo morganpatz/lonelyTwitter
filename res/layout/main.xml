@@ -32,10 +32,10 @@
         android:scrollbars="horizontal" />
 
     <Button
-        android:id="@+id/clear"
+        android:id="@+id/info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/clear" />
+        android:text="Info" />
 
     <Button
         android:id="@+id/save"
