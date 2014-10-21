@@ -38,9 +38,12 @@ public class LonelyTwitterActivityUITest extends
 	 * fills in the input text field and clicks the 'save'
 	 * button for the activity under test
 	 */
-	private void makeTweet(String text) {
+	protected void makeTweet(String text) {
 		assertNotNull(activity.findViewById(ca.ualberta.cs.lonelytwitter.R.id.save));
 		textInput.setText(text);
 		((Button) activity.findViewById(ca.ualberta.cs.lonelytwitter.R.id.save)).performClick();
+	
+		
 	}
+	
 }
